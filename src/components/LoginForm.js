@@ -1,12 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
+import styled from 'styled-components';
 
-const LoginForm = ({ onLogin }) => {
+const FormContainer = styled.div`
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const FormTitle = styled.h2`
+  margin-bottom: 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 15px;
+`;
+
+const FormLabel = styled.label`
+  display: block;
+  margin-bottom: 5px;
+`;
+
+const FormInput = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const FormButton = styled.button`
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+`;
+
+const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +59,7 @@ const LoginForm = ({ onLogin }) => {
 
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      onLogin(response.data.token);
+      login(response.data.token);
     } catch (error) {
       setError('Invalid email or password');
       console.error('Login error:', error);
@@ -25,35 +69,35 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <FormContainer>
+      <FormTitle>Login</FormTitle>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
+        <FormGroup>
+          <FormLabel htmlFor="email">Email:</FormLabel>
+          <FormInput
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
+        </FormGroup>
+        <FormGroup>
+          <FormLabel htmlFor="password">Password:</FormLabel>
+          <FormInput
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <button type="submit" disabled={loading}>
+        </FormGroup>
+        <FormButton type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
-        </button>
+        </FormButton>
       </form>
-    </div>
+    </FormContainer>
   );
 };
 

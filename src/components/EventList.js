@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 import Loading from './Loading';
 import Error from './Error';
 import Pagination from './Pagination';
@@ -36,16 +37,6 @@ const StyledButton = styled.button`
   margin-right: 10px;
 `;
 
-const StyledPagination = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-`;
-
-const StyledPaginationButton = styled.button`
-  margin: 0 5px;
-`;
-
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,10 +44,16 @@ const EventList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const { user } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`/api/events?page=${currentPage}`);
+        const response = await axios.get(`/api/events?page=${currentPage}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setEvents(response.data.events);
         setTotalPages(response.data.totalPages);
         setLoading(false);
@@ -67,7 +64,7 @@ const EventList = () => {
     };
 
     fetchEvents();
-  }, [currentPage]);
+  }, [currentPage, user]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -75,7 +72,11 @@ const EventList = () => {
 
   const handleSearch = async (query) => {
     try {
-      const response = await axios.get(`/api/events?search=${query}`);
+      const response = await axios.get(`/api/events?search=${query}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       setEvents(response.data.events);
       setTotalPages(response.data.totalPages);
       setCurrentPage(1);
@@ -93,20 +94,29 @@ const EventList = () => {
   }
 
   return (
-    <div>
+    <StyledContainer>
       <h2>Event List</h2>
       <Search onSearch={handleSearch} />
       {events.length === 0 ? (
         <p>No events found.</p>
       ) : (
         <>
-          <ul>
+          <StyledList>
             {events.map((event) => (
-              <li key={event.id}>
-                <Link to={`/events/${event.id}`}>{event.eventCategory}</Link>
-              </li>
+              <StyledListItem key={event.id}>
+                <StyledHeader>
+                  <div>
+                    <Link to={`/events/${event.id}`}>{event.eventCategory}</Link>
+                  </div>
+                  <div>
+                    <StyledButton>Edit</StyledButton>
+                    <StyledButton>Delete</StyledButton>
+                  </div>
+                </StyledHeader>
+                <StyledDetails>{event.details}</StyledDetails>
+              </StyledListItem>
             ))}
-          </ul>
+          </StyledList>
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -114,7 +124,7 @@ const EventList = () => {
           />
         </>
       )}
-    </div>
+    </StyledContainer>
   );
 };
 

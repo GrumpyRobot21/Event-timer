@@ -2,15 +2,46 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledFooter = styled.footer`
-  background-color: #f8f9fa;
-  padding: 20px;
+  background-color: #000;
+  padding: 1rem;
   text-align: center;
+  color: #fff;
+  font-family: 'Ojuju', sans-serif;
+`;
+
+const StyledSocialLink = styled.a`
+  margin: 0 10px;
+  color: #fff;
+  text-decoration: none;
 `;
 
 const Footer = () => {
   return (
     <StyledFooter>
-      <p>&copy; 2023 Your Company. All rights reserved.</p>
+      <p>&copy; 2024 Event-Timer. All rights reserved.</p>
+      <div>
+        <StyledSocialLink
+          href="https://www.facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Facebook
+        </StyledSocialLink>
+        <StyledSocialLink
+          href="https://www.linkedin.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
+        </StyledSocialLink>
+        <StyledSocialLink
+          href="https://www.instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram
+        </StyledSocialLink>
+      </div>
     </StyledFooter>
   );
 };
