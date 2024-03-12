@@ -1,18 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { AuthProvider } from './AuthContext';
-import PrivateRoute from './PrivateRoute';
-import Navbar from './Navbar';
-import Home from './Home';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
-import EventList from './EventList';
-import CreateEvent from './CreateEvent';
-import EventTracker from './EventTracker';
-import Footer from './Footer';
-import EventDetails from './EventDetails';
-import Profile from './Profile';
-import PasswordReset from './PasswordReset';
+// import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './components/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import LoginForm from './components/LoginForm';
+import SignupForm from './components/SignupForm';
+import EventList from './components/EventList';
+import CreateEvent from './components/CreateEvent';
+import EventTracker from './components/EventTracker';
+import Footer from './components/Footer';
+import EventDetails from './components/EventDetails';
+import Profile from './components/Profile';
+import PasswordReset from './components/PasswordReset';
 
 const App = () => {
   return (
@@ -20,17 +21,17 @@ const App = () => {
       <Router>
         <div>
           <Navbar />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={LoginForm} />
-            <Route path="/signup" component={SignupForm} />
-            <PrivateRoute path="/events/:id" component={EventDetails} />
-            <PrivateRoute path="/events" component={EventList} />
-            <PrivateRoute path="/create-event" component={CreateEvent} />
-            <PrivateRoute path="/event-tracker" component={EventTracker} />
-            <PrivateRoute path="/profile" component={Profile} />
-            <Route path="/password-reset" component={PasswordReset} />
-          </Switch>
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signup" element={<SignupForm />} />
+            <Route path="/events/:id" element={<PrivateRoute element={<EventDetails />} />} />
+            <Route path="/events" element={<PrivateRoute element={<EventList />} />} />
+            <Route path="/create-event" element={<PrivateRoute element={<CreateEvent />} />} />
+            <Route path="/event-tracker" element={<PrivateRoute element={<EventTracker />} />} />
+            <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
+            <Route path="/password-reset" element={<PasswordReset />} />
+          </Routes>
           <Footer />
         </div>
       </Router>

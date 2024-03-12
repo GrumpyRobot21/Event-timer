@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
 const CreateEvent = () => {
@@ -10,7 +11,8 @@ const CreateEvent = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const history = useHistory();
+  const navigate = useNavigate();
+  // const history = useHistory();
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
@@ -46,7 +48,8 @@ const CreateEvent = () => {
 
     try {
       await axios.post('/api/events', newEvent);
-      history.push('/events');
+      navigate('/events');
+      // history.push('/events');
     } catch (error) {
       setError('Failed to create the event');
       console.error('Error creating event:', error);
