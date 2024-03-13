@@ -1,7 +1,10 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
 export const AuthContext = createContext();
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -9,65 +12,43 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const response = await axios.get('/api/auth/user');
-          setUser(response.data);
-        }
-      } catch (error) {
-        setError('Failed to fetch user');
-        console.error('Error fetching user:', error);
-      } finally {
-        setLoading(false);
-      }
+    // Simulate a logged-in user by setting the user state
+    const simulatedUser = {
+      id: 1,
+      email: 'test@example.com',
+      // Add any other user properties you need
     };
-
-    fetchUser();
+    setUser(simulatedUser);
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const userResponse = await axios.get('/api/auth/user');
-      setUser(userResponse.data);
-    } catch (error) {
-      setError('Invalid email or password');
-      console.error('Login error:', error);
-    } finally {
-      setLoading(false);
-    }
+    // Simulated login function
+    console.log('Simulated login with:', email, password);
+    // You can set the user state here with the simulated user data
+    const simulatedUser = {
+      id: 1,
+      email: email,
+      // Add any other user properties you need
+    };
+    setUser(simulatedUser);
   };
 
   const signup = async (email, password) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post('/api/auth/signup', { email, password });
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const userResponse = await axios.get('/api/auth/user');
-      setUser(userResponse.data);
-    } catch (error) {
-      setError('Failed to create an account');
-      console.error('Signup error:', error);
-    } finally {
-      setLoading(false);
-    }
+    // Simulated signup function
+    console.log('Simulated signup with:', email, password);
+    // You can set the user state here with the simulated user data
+    const simulatedUser = {
+      id: 1,
+      email: email,
+      // Add any other user properties you need
+    };
+    setUser(simulatedUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+    // Simulated logout function
+    console.log('Simulated logout');
     setUser(null);
   };
 

@@ -1,11 +1,10 @@
 import React from 'react';
-// import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import LoginForm from './components/LoginForm';
+import LoginPage from './components/LoginPage';
 import SignupForm from './components/SignupForm';
 import EventList from './components/EventList';
 import CreateEvent from './components/CreateEvent';
@@ -22,8 +21,8 @@ const App = () => {
         <div>
           <Navbar />
           <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/login" element={<LoginForm />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/events/:id" element={<PrivateRoute element={<EventDetails />} />} />
             <Route path="/events" element={<PrivateRoute element={<EventList />} />} />
