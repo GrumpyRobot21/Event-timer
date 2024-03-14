@@ -1,7 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './components/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './components/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import LoginPage from './components/LoginPage';
@@ -14,6 +13,12 @@ import EventDetails from './components/EventDetails';
 import Profile from './components/Profile';
 import PasswordReset from './components/PasswordReset';
 
+const ProtectedRoute = ({ element: Component, ...rest }) => {
+  const { user } = useAuth();
+
+  return user ? <Component {...rest} /> : <Navigate to="/login" replace />;
+};
+
 const App = () => {
   return (
     <AuthProvider>
@@ -24,11 +29,26 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupForm />} />
-            <Route path="/events/:id" element={<PrivateRoute element={<EventDetails />} />} />
-            <Route path="/events" element={<PrivateRoute element={<EventList />} />} />
-            <Route path="/create-event" element={<PrivateRoute element={<CreateEvent />} />} />
-            <Route path="/event-tracker" element={<PrivateRoute element={<EventTracker />} />} />
-            <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
+            <Route
+              path="/events/:id"
+              element={<ProtectedRoute element={EventDetails} />}
+            />
+            <Route
+              path="/events"
+              element={<ProtectedRoute element={EventList} />}
+            />
+            <Route
+              path="/create-event"
+              element={<ProtectedRoute element={CreateEvent} />}
+            />
+            <Route
+              path="/event-tracker"
+              element={<ProtectedRoute element={EventTracker} />}
+            />
+            <Route
+              path="/profile"
+              element={<ProtectedRoute element={Profile} />}
+            />
             <Route path="/password-reset" element={<PasswordReset />} />
           </Routes>
           <Footer />

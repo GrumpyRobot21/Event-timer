@@ -3,29 +3,70 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { AuthContext } from './AuthContext';
 
-const StyledContainer = styled.div`
-  margin: 20px;
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Ojuju', sans-serif;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const TrackerContainer = styled.div`
+  max-width: 400px;
+  margin: auto;
+  padding: 2rem;
+  border: 5px solid #000;
+  border-radius: 10px;
+  background-color: #fff;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 1rem;
+  }
 `;
 
 const StyledTimer = styled.div`
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
 `;
 
 const StyledButton = styled.button`
-  padding: 10px;
-  margin-right: 10px;
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
 `;
 
 const StyledSelect = styled.select`
-  padding: 5px;
-  margin-bottom: 10px;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 `;
 
 const StyledTextArea = styled.textarea`
   width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 100px;
+  margin-bottom: 1rem;
 `;
 
 const EventTracker = () => {
@@ -100,12 +141,16 @@ const EventTracker = () => {
   };
 
   return (
-    <StyledContainer>
-      <h2>Event Tracker</h2>
-      <StyledTimer>{formatTime(time)}</StyledTimer>
-      <StyledButton onClick={handleStartStop}>{isRunning ? 'Stop' : 'Start'}</StyledButton>
-      <div>
-        <StyledSelect value={eventCategory} onChange={handleEventCategoryChange}>
+    <PageContainer>
+      <TrackerContainer>
+        <StyledTimer>{formatTime(time)}</StyledTimer>
+        <StyledButton onClick={handleStartStop}>
+          {isRunning ? 'Stop' : 'Start'}
+        </StyledButton>
+        <StyledSelect
+          value={eventCategory}
+          onChange={handleEventCategoryChange}
+        >
           <option value="">Select Event Category</option>
           {eventCategories.map((category) => (
             <option key={category} value={category}>
@@ -113,16 +158,14 @@ const EventTracker = () => {
             </option>
           ))}
         </StyledSelect>
-      </div>
-      <div>
         <StyledTextArea
           value={eventDetails}
           onChange={handleEventDetailsChange}
           maxLength={320}
           placeholder="Enter event details"
         />
-      </div>
-      <StyledButton onClick={handleSaveEvent}>Save Event</StyledButton>
+        <StyledButton onClick={handleSaveEvent}>Save Event</StyledButton>
+      </TrackerContainer>
       <h3>Saved Events:</h3>
       <ul>
         {events.map((event, index) => (
@@ -131,7 +174,7 @@ const EventTracker = () => {
           </li>
         ))}
       </ul>
-    </StyledContainer>
+    </PageContainer>
   );
 };
 

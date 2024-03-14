@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
+import { useAuth } from './AuthContext';
 
-const PrivateRoute = ({ element: Element, ...rest }) => {
-  const { user } = useContext(AuthContext);
+const PrivateRoute = ({ element: Component, ...rest }) => {
+  const { user } = useAuth();
 
   return (
     <Route
       {...rest}
-      element={user ? <Element /> : <Navigate to="/login" replace />}
+      element={user ? <Component /> : <Navigate to="/login" replace />}
     />
   );
 };
