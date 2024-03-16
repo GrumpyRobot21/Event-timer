@@ -54,7 +54,6 @@ const Navbar = () => {
         {user ? (
           <>
             <NavLink to="/events">Event List</NavLink>
-            <NavLink to="/create-event">Create Event</NavLink>
             <NavLink to="/event-tracker">Event Tracker</NavLink>
             <NavLink to="/" onClick={logout}>
               Sign Out

@@ -47,6 +47,7 @@ const StyledButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 1rem;
+  font-family: 'Ojuju', sans-serif;
 `;
 
 const StyledSelect = styled.select`
@@ -56,6 +57,7 @@ const StyledSelect = styled.select`
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 1rem;
+  font-family: 'Ojuju', sans-serif;
 `;
 
 const StyledTextArea = styled.textarea`
@@ -67,6 +69,7 @@ const StyledTextArea = styled.textarea`
   resize: vertical;
   min-height: 100px;
   margin-bottom: 1rem;
+  font-family: 'Ojuju', sans-serif;
 `;
 
 const EventTracker = () => {

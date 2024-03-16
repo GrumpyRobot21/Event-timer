@@ -1,37 +1,36 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
 import styled from 'styled-components';
+import axios from 'axios';
+import { AuthContext } from './AuthContext';
 
-const PageContainer = styled.div`
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  padding: 2rem;
-  font-family: 'Ojuju', sans-serif;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
 `;
 
-const CreateEventContainer = styled.div`
-  max-width: 600px; // Increase the max-width to make the container wider
-  margin: auto;
-  padding: 2rem;
-  border: 5px solid #000;
-  border-radius: 10px;
+const ModalContent = styled.div`
   background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  font-family: 'Ojuju', sans-serif;
+`;
 
-  @media (max-width: 768px) {
-    max-width: 100%;
-    padding: 1rem;
-  }
+const ModalTitle = styled.h2`
+  margin-bottom: 1rem;
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
 const FormLabel = styled.label`
@@ -65,77 +64,63 @@ const FormTextArea = styled.textarea`
   min-height: 100px;
 `;
 
-const StyledButton = styled.button`
-  display: block;
-  width: 100%;
-  padding: 1rem;
-  font-size: 1.2rem;
-  color: #fff;
-  background-color: #007bff;
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-right: 1rem;
+
+  ${({ primary }) =>
+    primary &&
+    `
+    background-color: #007bff;
+    color: #fff;
+  `}
+
+  ${({ secondary }) =>
+    secondary &&
+    `
+    background-color: #ccc;
+    color: #000;
+  `}
 `;
 
-const CreateEvent = () => {
-  const [eventCategory, setEventCategory] = useState('');
-  const [eventDetails, setEventDetails] = useState('');
-  const [duration, setDuration] = useState(0);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
+const EditEventModal = ({ event, onClose, onEventUpdate }) => {
+  const [eventCategory, setEventCategory] = useState(event.eventCategory);
+  const [eventDetails, setEventDetails] = useState(event.details);
+  const [duration, setDuration] = useState(event.duration);
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
 
-    if (!eventCategory) {
-      setError('Please select an event category.');
-      setLoading(false);
-      return;
-    }
-
-    if (!eventDetails) {
-      setError('Please enter event details.');
-      setLoading(false);
-      return;
-    }
-
-    if (!duration || duration < 0) {
-      setError('Please enter a valid duration (in seconds).');
-      setLoading(false);
-      return;
-    }
-
-    const newEvent = {
+    const updatedEvent = {
+      ...event,
       eventCategory,
       details: eventDetails,
       duration,
-      userId: user.id,
     };
 
     try {
-      await axios.post('/api/events', newEvent);
-      navigate('/events');
+      await axios.put(`/api/events/${event.id}`, updatedEvent, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      onEventUpdate(updatedEvent);
     } catch (error) {
-      setError('Failed to create the event');
-      console.error('Error creating event:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error updating event:', error);
     }
   };
 
   return (
-    <PageContainer>
-      <CreateEventContainer>
-        <h2>Create Event</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+    <ModalOverlay>
+      <ModalContent>
+        <ModalTitle>Edit Event</ModalTitle>
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <FormLabel htmlFor="eventCategory">Event Category:</FormLabel>
@@ -145,7 +130,6 @@ const CreateEvent = () => {
               onChange={(e) => setEventCategory(e.target.value)}
               required
             >
-              <option value="">Select Category</option>
               {eventCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -172,14 +156,16 @@ const CreateEvent = () => {
               required
             />
           </FormGroup>
-          <StyledButton type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Event'}
-          </StyledButton>
+          <Button primary type="submit">
+            Save
+          </Button>
+          <Button secondary type="button" onClick={onClose}>
+            Cancel
+          </Button>
         </form>
-      </CreateEventContainer>
-    </PageContainer>
+      </ModalContent>
+    </ModalOverlay>
   );
+};
 
-}; 
-
-export default CreateEvent;
+export default EditEventModal;
