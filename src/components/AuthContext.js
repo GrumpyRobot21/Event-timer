@@ -1,4 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
@@ -9,17 +11,26 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate a logged-in user by setting the user state
-    const simulatedUser = {
-      id: 1,
-      email: 'test@example.com',
-      // Add any other user properties you need
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await axios.get('/api/auth/user');
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    setUser(simulatedUser);
-    setLoading(false);
+
+    fetchUser();
   }, []);
 
   const login = async (email, password) => {
@@ -47,13 +58,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Simulated logout function
-    console.log('Simulated logout');
+    localStorage.removeItem('token');
     setUser(null);
+    navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

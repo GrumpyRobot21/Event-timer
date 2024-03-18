@@ -61,6 +61,7 @@ const ErrorMessage = styled.p`
 
 const SignupForm = () => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -73,6 +74,12 @@ const SignupForm = () => {
     setError('');
     setLoading(true);
 
+    if (!name) {
+      setError('Please enter your name');
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -80,7 +87,7 @@ const SignupForm = () => {
     }
 
     try {
-      await signup(email, password);
+      await signup({ email, password, name });
     } catch (error) {
       setError('Failed to create an account');
       console.error('Signup error:', error);
@@ -95,6 +102,16 @@ const SignupForm = () => {
         <FormTitle>Sign Up</FormTitle>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <form onSubmit={handleSubmit}>
+          <FormGroup>
+            <FormLabel htmlFor="name">Name:</FormLabel>
+            <FormInput
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </FormGroup>
           <FormGroup>
             <FormLabel htmlFor="email">Email:</FormLabel>
             <FormInput

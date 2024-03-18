@@ -55,6 +55,7 @@ const Navbar = () => {
           <>
             <NavLink to="/events">Event List</NavLink>
             <NavLink to="/event-tracker">Event Tracker</NavLink>
+            <NavLink to="/profile">Profile</NavLink>
             <NavLink to="/" onClick={logout}>
               Sign Out
             </NavLink>
