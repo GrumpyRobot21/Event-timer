@@ -76,30 +76,7 @@ const IconButton = styled.button`
 `;
 
 const EventList = () => {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      eventCategory: 'Meeting',
-      createdAt: '2023-06-10T10:00:00',
-      duration: 3600,
-      details: 'Project discussion with team',
-    },
-    {
-      id: 2,
-      eventCategory: 'Phone Call',
-      createdAt: '2023-06-11T14:30:00',
-      duration: 1800,
-      details: 'Client follow-up call',
-    },
-    {
-      id: 3,
-      eventCategory: 'Video Call',
-      createdAt: '2023-06-12T16:45:00',
-      duration: 2700,
-      details: 'Remote interview with candidate',
-    },
-  ]);
-  // const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');

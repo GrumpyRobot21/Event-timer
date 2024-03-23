@@ -82,7 +82,7 @@ const Profile = () => {
     setUpdateError(null);
 
     try {
-      await axios.put('/api/profile', { name, email });
+      await axios.put('/api/profile/', { name, email });
       // Update the user context or refetch user data
       setUpdateLoading(false);
     } catch (error) {
@@ -103,7 +103,7 @@ const Profile = () => {
     }
 
     try {
-      await axios.put('/api/change-password', { currentPassword, newPassword });
+      await axios.put('/api/change-password/', { current_password: currentPassword, new_password: newPassword });
       setUpdateLoading(false);
       // Clear form fields and display a success message
       setCurrentPassword('');
@@ -119,7 +119,7 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete('/api/profile');
+        await axios.delete('/api/delete-profile/');
         logout();
         // Redirect to the home page or display a success message
       } catch (error) {
