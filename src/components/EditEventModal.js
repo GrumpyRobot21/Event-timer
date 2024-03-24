@@ -106,7 +106,7 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
     };
 
     try {
-      await axios.put(`/api/events/${event.id}`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${event.id}`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

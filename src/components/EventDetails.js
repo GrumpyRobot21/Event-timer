@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import Loading from './Loading';
 import Error from './Error';
+import { AuthContext } from './AuthContext';
 
 const StyledEventDetails = styled.div`
   margin: 20px;
@@ -14,11 +15,16 @@ const EventDetails = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`/api/events/${id}`);
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events/${id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setEvent(response.data);
         setLoading(false);
       } catch (error) {
@@ -27,8 +33,10 @@ const EventDetails = () => {
       }
     };
 
-    fetchEvent();
-  }, [id]);
+    if (user && user.token) {
+      fetchEvent();
+    }
+  }, [id, user]);
 
   if (loading) {
     return <Loading />;
