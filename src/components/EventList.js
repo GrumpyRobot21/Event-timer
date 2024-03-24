@@ -81,7 +81,6 @@ const EventList = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-  // const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -91,7 +90,7 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`/api/events?page=${page}&search=${searchTerm}`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events?page=${page}&search=${searchTerm}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -147,16 +146,25 @@ const EventList = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleEventUpdate = (updatedEvent) => {
-    setEvents((prevEvents) =>
-      prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
-    );
-    closeEditModal();
+  const handleEventUpdate = async (updatedEvent) => {
+    try {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${updatedEvent.id}`, updatedEvent, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setEvents((prevEvents) =>
+        prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
+      );
+      closeEditModal();
+    } catch (error) {
+      setError('Failed to update event');
+    }
   };
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`/api/events/${selectedEvent.id}`, {
+      await axios.delete(`https://eventtimerdb.herokuapp.com/api/events/${selectedEvent.id}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
