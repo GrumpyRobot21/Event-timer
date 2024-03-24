@@ -95,7 +95,7 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('https://eventtimerdb.herokuapp.com/api/events', {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -132,7 +132,7 @@ const EventTracker = () => {
     };
 
     try {
-      await axios.post('https://eventtimerdb.herokuapp.com/api/events', eventData, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/events`, eventData, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
