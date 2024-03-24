@@ -19,9 +19,8 @@ const PasswordReset = () => {
     setLoading(true);
     setError(null);
     setSuccess(false);
-
     try {
-      await axios.post('/api/password-reset', { email });
+      await axios.post('https://eventtimerdb.herokuapp.com/api/password-reset/', { email });
       setSuccess(true);
       setLoading(false);
     } catch (error) {
