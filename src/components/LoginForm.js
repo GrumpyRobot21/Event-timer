@@ -56,17 +56,18 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      login(response.data.token);
+      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
+        email,
+        password,
+      });
+      login(response.data.token, response.data.user);
     } catch (error) {
       setError('Invalid email or password');
       console.error('Login error:', error);
