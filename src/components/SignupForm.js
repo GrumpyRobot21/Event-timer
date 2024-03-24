@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
-// import axios from 'axios';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
@@ -66,7 +66,6 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { signup } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
@@ -87,7 +86,14 @@ const SignupForm = () => {
     }
 
     try {
-      await signup({ email, password, name });
+      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/signup/', {
+        email,
+        password,
+        name,
+      });
+      const token = response.data.token;
+      const user = response.data.user;
+      signup(token, user);
     } catch (error) {
       setError('Failed to create an account');
       console.error('Signup error:', error);
@@ -95,6 +101,7 @@ const SignupForm = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <PageContainer>
