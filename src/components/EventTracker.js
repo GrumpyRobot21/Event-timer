@@ -95,15 +95,21 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('/api/events');
+        const response = await axios.get('https://eventtimerdb.herokuapp.com/api/events', {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         setEvents(response.data);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
 
-    fetchEvents();
-  }, []);
+    if (user && user.token) {
+      fetchEvents();
+    }
+  }, [user]);
 
   const handleStartStop = () => {
     setIsRunning(!isRunning);
@@ -126,7 +132,11 @@ const EventTracker = () => {
     };
 
     try {
-      await axios.post('/api/events', eventData);
+      await axios.post('https://eventtimerdb.herokuapp.com/api/events', eventData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       setEvents([...events, eventData]);
       setTime(0);
       setEventCategory('');
