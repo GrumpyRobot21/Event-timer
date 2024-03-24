@@ -20,7 +20,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events/${id}`, {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/${id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
