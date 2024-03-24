@@ -82,7 +82,11 @@ const Profile = () => {
     setUpdateError(null);
 
     try {
-      await axios.put('/api/profile/', { name, email });
+      await axios.put('https://eventtimerdb.herokuapp.com/api/profile/', { name, email }, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       // Update the user context or refetch user data
       setUpdateLoading(false);
     } catch (error) {
@@ -103,7 +107,11 @@ const Profile = () => {
     }
 
     try {
-      await axios.put('/api/change-password/', { current_password: currentPassword, new_password: newPassword });
+      await axios.put('https://eventtimerdb.herokuapp.com/api/change-password/', { current_password: currentPassword, new_password: newPassword }, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       setUpdateLoading(false);
       // Clear form fields and display a success message
       setCurrentPassword('');
@@ -119,7 +127,11 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete('/api/delete-profile/');
+        await axios.delete('https://eventtimerdb.herokuapp.com/api/delete-profile/', {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         logout();
         // Redirect to the home page or display a success message
       } catch (error) {
