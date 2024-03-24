@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const response = await axios.get('/api/auth/user');
+          const response = await axios.get('https://eventtimerdb.herokuapp.com/api/auth/user');
           setUser(response.data);
         }
       } catch (error) {
@@ -34,31 +34,40 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    // Simulated login function
-    console.log('Simulated login with:', email, password);
-    // You can set the user state here with the simulated user data
-    const simulatedUser = {
-      id: 1,
-      email: email,
-      // Add any other user properties you need
-    };
-    setUser(simulatedUser);
+    try {
+      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
+        email,
+        password,
+      });
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(response.data.user);
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
   };
 
   const signup = async (email, password) => {
-    // Simulated signup function
-    console.log('Simulated signup with:', email, password);
-    // You can set the user state here with the simulated user data
-    const simulatedUser = {
-      id: 1,
-      email: email,
-      // Add any other user properties you need
-    };
-    setUser(simulatedUser);
+    try {
+      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/signup/', {
+        email,
+        password,
+      });
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(response.data.user);
+    } catch (error) {
+      console.error('Error signing up:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     navigate('/login');
   };
