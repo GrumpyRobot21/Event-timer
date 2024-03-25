@@ -21,8 +21,8 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div>
           <Navbar />
           <Routes>
@@ -39,8 +39,8 @@ const App = () => {
           </Routes>
           <Footer />
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 };
 
