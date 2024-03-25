@@ -90,7 +90,7 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events?page=${page}&search=${searchTerm}`, {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&search=${searchTerm}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -148,7 +148,7 @@ const EventList = () => {
 
   const handleEventUpdate = async (updatedEvent) => {
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${updatedEvent.id}`, updatedEvent, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${updatedEvent.id}`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -164,7 +164,7 @@ const EventList = () => {
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`https://eventtimerdb.herokuapp.com/api/events/${selectedEvent.id}`, {
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/events/${selectedEvent.id}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
