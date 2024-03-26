@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { AuthContext } from './AuthContext';
 import Loading from './Loading';
 import Error from './Error';
+import { useAuth } from './AuthContext';
 
 const PageContainer = styled.div`
   display: flex;
@@ -67,7 +68,7 @@ const Button = styled.button`
 `;
 
 const Profile = () => {
-  const { user, loading, error, logout } = useContext(AuthContext);
+  const {loading, error } = useContext(AuthContext);
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -75,6 +76,8 @@ const Profile = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
+  const { user, logout } = useAuth();
+  const token = user?.token;
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -88,9 +91,9 @@ const Profile = () => {
     setUpdateError(null);
 
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/api/profile/`, { name, email }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/profile/', { name, email }, {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
           'X-CSRFToken': getCookie('csrftoken'),
         },
       });
@@ -114,9 +117,9 @@ const Profile = () => {
     }
 
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/api/change-password/`, { current_password: currentPassword, new_password: newPassword }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/change-password/', { current_password: currentPassword, new_password: newPassword }, {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
           'X-CSRFToken': getCookie('csrftoken'),
         },
       });
@@ -135,9 +138,9 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete(`https://eventtimerdb.herokuapp.com/api/delete-profile/`, {
+        await axios.delete('https://eventtimerdb.herokuapp.com/delete-profile/', {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
             'X-CSRFToken': getCookie('csrftoken'),
           },
         });

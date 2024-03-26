@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
+import { useAuth } from './AuthContext';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -91,7 +92,8 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
   const [eventCategory, setEventCategory] = useState(event.eventCategory);
   const [eventDetails, setEventDetails] = useState(event.details);
   const [duration, setDuration] = useState(event.duration);
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
+  const token = user?.token;
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
@@ -112,9 +114,9 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
     };
 
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${event.id}`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/events/${event.id}/`, updatedEvent, {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
           'X-CSRFToken': getCookie('csrftoken'),
         },
       });

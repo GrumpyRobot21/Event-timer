@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import Loading from './Loading';
 import Error from './Error';
 import { AuthContext } from './AuthContext';
+import { useAuth } from './AuthContext';
 
 const StyledEventDetails = styled.div`
   margin: 20px;
@@ -15,7 +16,8 @@ const EventDetails = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
+  const token = user?.token;
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -26,9 +28,9 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events/${id}`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/events/${id}/`, {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
             'X-CSRFToken': getCookie('csrftoken'),
           },
         });
@@ -40,10 +42,10 @@ const EventDetails = () => {
       }
     };
 
-    if (user && user.token) {
+    if (token) {
       fetchEvent();
     }
-  }, [id, user]);
+  }, [id, token]);
 
   if (loading) {
     return <Loading />;

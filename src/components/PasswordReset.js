@@ -26,7 +26,7 @@ const PasswordReset = () => {
     setError(null);
     setSuccess(false);
     try {
-      await axios.post(`https://eventtimerdb.herokuapp.com/api/password-reset/`, { email }, {
+      await await axios.post('https://eventtimerdb.herokuapp.com/api/password-reset/', { email }, {
         headers: {
           'X-CSRFToken': getCookie('csrftoken'),
         },

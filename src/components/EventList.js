@@ -7,6 +7,7 @@ import Error from './Error';
 import EditEventModal from './EditEventModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { format } from 'date-fns';
+import { useAuth } from './AuthContext';
 
 const PageContainer = styled.div`
   display: flex;
@@ -84,8 +85,10 @@ const EventList = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { user } = useAuth();
+  const token = user?.token;
 
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -96,9 +99,10 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events?page=${page}&search=${searchTerm}`, {
+        const response = await axios.get('https://eventtimerdb.herokuapp.com/events/', {
+          params: { search: searchTerm },
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
             'X-CSRFToken': getCookie('csrftoken'),
           },
         });
@@ -111,7 +115,7 @@ const EventList = () => {
     };
 
     fetchEvents();
-  }, [user, page, searchTerm]);
+  }, [token, searchTerm]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -155,9 +159,9 @@ const EventList = () => {
 
   const handleEventUpdate = async (updatedEvent) => {
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${updatedEvent.id}`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/events/${updatedEvent.id}/`, updatedEvent, {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
           'X-CSRFToken': getCookie('csrftoken'),
         },
       });
@@ -172,9 +176,9 @@ const EventList = () => {
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`https://eventtimerdb.herokuapp.com/api/events/${selectedEvent.id}`, {
+      await axios.delete(`https://eventtimerdb.herokuapp.com/events/${selectedEvent.id}/`, {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
           'X-CSRFToken': getCookie('csrftoken'),
         },
       });
