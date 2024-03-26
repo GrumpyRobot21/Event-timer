@@ -82,6 +82,12 @@ const EventTracker = () => {
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
   useEffect(() => {
     let interval;
     if (isRunning) {
@@ -95,9 +101,10 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
+            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvents(response.data);
@@ -132,9 +139,10 @@ const EventTracker = () => {
     };
 
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/events`, eventData, {
+      await axios.post(`https://eventtimerdb.herokuapp.com/api/events`, eventData, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents([...events, eventData]);

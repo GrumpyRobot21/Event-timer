@@ -17,12 +17,19 @@ const EventDetails = () => {
   const [error, setError] = useState(null);
   const { user } = useContext(AuthContext);
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/${id}`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events/${id}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
+            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvent(response.data);

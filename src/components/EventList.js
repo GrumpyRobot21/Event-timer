@@ -87,12 +87,19 @@ const EventList = () => {
 
   const { user } = useContext(AuthContext);
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&search=${searchTerm}`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events?page=${page}&search=${searchTerm}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
+            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvents((prevEvents) => [...prevEvents, ...response.data]);
@@ -148,9 +155,10 @@ const EventList = () => {
 
   const handleEventUpdate = async (updatedEvent) => {
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${updatedEvent.id}`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${updatedEvent.id}`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents((prevEvents) =>
@@ -164,9 +172,10 @@ const EventList = () => {
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/events/${selectedEvent.id}`, {
+      await axios.delete(`https://eventtimerdb.herokuapp.com/api/events/${selectedEvent.id}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents((prevEvents) => prevEvents.filter((event) => event.id !== selectedEvent.id));

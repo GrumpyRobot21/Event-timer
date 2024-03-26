@@ -95,6 +95,12 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -106,9 +112,10 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
     };
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${event.id}`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${event.id}`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       onEventUpdate(updatedEvent);

@@ -14,13 +14,20 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+
     const fetchUser = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
         if (token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/user`);
+          axios.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
+          const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/auth/user`);
           setUser(response.data);
         }
       } catch (error) {
@@ -35,9 +42,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login/`, {
+      const response = await axios.post(`https://eventtimerdb.herokuapp.com/api/auth/login/`, {
         email,
         password,
+      }, {
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+        },
       });
       const token = response.data.token;
       localStorage.setItem('token', token);
@@ -51,9 +62,13 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (email, password) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/signup/`, {
+      const response = await axios.post(`https://eventtimerdb.herokuapp.com/api/auth/signup/`, {
         email,
         password,
+      }, {
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+        },
       });
       const token = response.data.token;
       localStorage.setItem('token', token);

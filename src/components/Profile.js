@@ -76,15 +76,22 @@ const Profile = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/profile/`, { name, email }, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/profile/`, { name, email }, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       // Update the user context or refetch user data
@@ -107,9 +114,10 @@ const Profile = () => {
     }
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/change-password/`, { current_password: currentPassword, new_password: newPassword }, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/change-password/`, { current_password: currentPassword, new_password: newPassword }, {
         headers: {
           Authorization: `Bearer ${user.token}`,
+          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setUpdateLoading(false);
@@ -127,9 +135,10 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/delete-profile/`, {
+        await axios.delete(`https://eventtimerdb.herokuapp.com/api/delete-profile/`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
+            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         logout();
