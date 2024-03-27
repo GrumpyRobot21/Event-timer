@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import Loading from './Loading';
 import Error from './Error';
-import { AuthContext } from './AuthContext';
 import { useAuth } from './AuthContext';
 
 const StyledEventDetails = styled.div`
@@ -19,19 +18,12 @@ const EventDetails = () => {
   const { user } = useAuth();
   const token = user?.token;
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`https://eventtimerdb.herokuapp.com/events/${id}/`, {
+        const response = await axios.get(`https://eventtimerdb.herokuapp.com/api/events/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvent(response.data);

@@ -89,12 +89,11 @@ const Profile = () => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
-
+  
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/profile/', { name, email }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/profile/me/', { name, email }, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       // Update the user context or refetch user data
@@ -109,18 +108,17 @@ const Profile = () => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
-
+  
     if (newPassword !== confirmNewPassword) {
       setUpdateError('New passwords do not match');
       setUpdateLoading(false);
       return;
     }
-
+  
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/change-password/', { current_password: currentPassword, new_password: newPassword }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/profile/change_password/', { current_password: currentPassword, new_password: newPassword }, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setUpdateLoading(false);
@@ -138,10 +136,9 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete('https://eventtimerdb.herokuapp.com/delete-profile/', {
+        await axios.delete('https://eventtimerdb.herokuapp.com/profile/delete_profile/', {
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         logout();
@@ -151,6 +148,7 @@ const Profile = () => {
       }
     }
   };
+  
 
   if (loading) {
     return <Loading />;

@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           axios.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
-          const response = await axios.get('https://eventtimerdb.herokuapp.com/profile/');
+          const response = await axios.get('https://eventtimerdb.herokuapp.com/profile/me');
           setUser({ token, ...response.data });
         }
       } catch (error) {
@@ -36,50 +36,47 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-    fetchUser();
-  }, []);
 
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
-        email,
-        password,
-      }, {
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-        },
-      });
-      const token = response.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ token, ...response.data.user });
-    } catch (error) {
-      console.error('Error logging in:', error);
-      throw error;
-    }
-  };
+    const login = async (email, password) => {
+      try {
+        const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
+          email,
+          password,
+        }, {
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+        });
+        const token = response.data.access;
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser({ token, ...response.data.user });
+      } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+      }
+    };
 
-  const signup = async (email, password, name) => {
-    try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/register/', {
-        username: email,
-        email,
-        password,
-        name,
-      }, {
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-        },
-      });
-      const token = response.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ token, ...response.data.user });
-    } catch (error) {
-      console.error('Error signing up:', error);
-      throw error;
-    }
-  };
+    const signup = async (email, password, name) => {
+      try {
+        const response = await axios.post('https://eventtimerdb.herokuapp.com/register/', {
+          email,
+          password,
+          name,
+        }, {
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+        });
+        const token = response.data.access;
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser({ token, ...response.data.user });
+      } catch (error) {
+        console.error('Error signing up:', error);
+        throw error;
+      }
+    };
 
   const logout = () => {
     localStorage.removeItem('token');

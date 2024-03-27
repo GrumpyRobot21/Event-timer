@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { AuthContext } from './AuthContext';
 import Loading from './Loading';
 import Error from './Error';
 import EditEventModal from './EditEventModal';
@@ -88,22 +87,13 @@ const EventList = () => {
   const { user } = useAuth();
   const token = user?.token;
 
-  // const { user } = useContext(AuthContext);
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('https://eventtimerdb.herokuapp.com/events/', {
+        const response = await axios.get('https://eventtimerdb.herokuapp.com/api/events/', {
           params: { search: searchTerm },
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvents((prevEvents) => [...prevEvents, ...response.data]);
@@ -159,10 +149,9 @@ const EventList = () => {
 
   const handleEventUpdate = async (updatedEvent) => {
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/events/${updatedEvent.id}/`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${updatedEvent.id}/`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents((prevEvents) =>
@@ -176,10 +165,9 @@ const EventList = () => {
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`https://eventtimerdb.herokuapp.com/events/${selectedEvent.id}/`, {
+      await axios.delete(`https://eventtimerdb.herokuapp.com/api/events/${selectedEvent.id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents((prevEvents) => prevEvents.filter((event) => event.id !== selectedEvent.id));
