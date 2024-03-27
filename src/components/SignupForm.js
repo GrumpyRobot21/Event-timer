@@ -86,7 +86,7 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/signup/', {
+      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/register/', {
         email,
         password,
         name,
