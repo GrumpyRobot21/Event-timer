@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { AuthContext } from './AuthContext';
 import { useAuth } from './AuthContext';
+
 
 const PageContainer = styled.div`
   display: flex;
@@ -83,12 +83,6 @@ const EventTracker = () => {
   const token = user?.token;
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
   useEffect(() => {
     let interval;
     if (isRunning) {
@@ -102,10 +96,9 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('https://eventtimerdb.herokuapp.com/events/', {
+        const response = await axios.get('https://eventtimerdb.herokuapp.com/api/events/', {
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-CSRFToken': getCookie('csrftoken'),
           },
         });
         setEvents(response.data);
@@ -133,17 +126,15 @@ const EventTracker = () => {
 
   const handleSaveEvent = async () => {
     const eventData = {
-      userId: user.id,
       eventCategory,
       duration: time,
       details: eventDetails,
     };
 
     try {
-      await axios.post('https://eventtimerdb.herokuapp.com/events/', eventData, {
+      await axios.post('https://eventtimerdb.herokuapp.com/api/events/', eventData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       setEvents([...events, eventData]);

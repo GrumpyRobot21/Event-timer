@@ -14,23 +14,13 @@ const PasswordReset = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      await await axios.post('https://eventtimerdb.herokuapp.com/api/password-reset/', { email }, {
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-        },
-      });
+      await axios.post('https://eventtimerdb.herokuapp.com/api/password-reset/', { email });
       setSuccess(true);
       setLoading(false);
     } catch (error) {

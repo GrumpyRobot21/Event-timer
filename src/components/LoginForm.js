@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import { useAuth } from './AuthContext';
 
 const FormContainer = styled.div`
   max-width: 400px;
@@ -56,18 +56,14 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
-        email,
-        password,
-      });
-      login(response.data.token, response.data.user);
+      await login(email, password);
     } catch (error) {
       setError('Invalid email or password');
       console.error('Login error:', error);
@@ -105,7 +101,7 @@ const LoginForm = () => {
           {loading ? 'Logging in...' : 'Login'}
         </FormButton>
       </form>
-      </FormContainer>
+    </FormContainer>
   );
 };
 
