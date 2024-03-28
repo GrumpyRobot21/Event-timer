@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { AuthContext } from './AuthContext';
+import styled from 'styled-components';
 import { useAuth } from './AuthContext';
 
 const ModalOverlay = styled.div`
@@ -95,14 +94,6 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
   const { user } = useAuth();
   const token = user?.token;
 
-  const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -114,10 +105,9 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
     };
 
     try {
-      await axios.put(`https://eventtimerdb.herokuapp.com/events/${event.id}/`, updatedEvent, {
+      await axios.put(`https://eventtimerdb.herokuapp.com/api/events/${event.id}/`, updatedEvent, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': getCookie('csrftoken'),
         },
       });
       onEventUpdate(updatedEvent);
