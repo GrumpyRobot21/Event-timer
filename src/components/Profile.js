@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { AuthContext } from './AuthContext';
 import Loading from './Loading';
 import Error from './Error';
 import { useAuth } from './AuthContext';
@@ -68,9 +67,8 @@ const Button = styled.button`
 `;
 
 const Profile = () => {
-  const {loading, error } = useContext(AuthContext);
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -79,19 +77,20 @@ const Profile = () => {
   const { user, logout } = useAuth();
   const token = user?.token;
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
+  useState(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
-  
+
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/profile/me/', { name, email }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/api/profile/me/', { name, email }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -108,15 +107,15 @@ const Profile = () => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
-  
+
     if (newPassword !== confirmNewPassword) {
       setUpdateError('New passwords do not match');
       setUpdateLoading(false);
       return;
     }
-  
+
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/profile/change_password/', { current_password: currentPassword, new_password: newPassword }, {
+      await axios.put('https://eventtimerdb.herokuapp.com/api/profile/change_password/', { current_password: currentPassword, new_password: newPassword }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -136,7 +135,7 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete('https://eventtimerdb.herokuapp.com/profile/delete_profile/', {
+        await axios.delete('https://eventtimerdb.herokuapp.com/api/profile/delete_profile/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -148,14 +147,9 @@ const Profile = () => {
       }
     }
   };
-  
 
-  if (loading) {
+  if (!user) {
     return <Loading />;
-  }
-
-  if (error) {
-    return <Error message={error} />;
   }
 
   return (
