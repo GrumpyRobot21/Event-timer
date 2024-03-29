@@ -94,6 +94,8 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
   const { user } = useAuth();
   const token = user?.token;
 
+  const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
