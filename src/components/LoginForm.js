@@ -92,6 +92,7 @@ const LoginForm = () => {
           <FormInput
             type="password"
             id="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
