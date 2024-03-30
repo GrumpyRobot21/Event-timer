@@ -15,21 +15,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/profile/me/`);
-          setUser({ token, ...response.data });
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      } finally {
-        setLoading(false);
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
       }
+      setLoading(false);
     };
-
     fetchUser();
   }, []);
 
@@ -39,10 +30,11 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const token = response.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ token, ...response.data.user });
+      const { access, refresh, expiresIn } = response.data;
+      const expiresAt = new Date().getTime() + expiresIn * 1000;
+      const user = { access, refresh, expiresAt };
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
@@ -56,10 +48,11 @@ export const AuthProvider = ({ children }) => {
         password,
         name,
       });
-      const token = response.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ token, ...response.data.user });
+      const { access, refresh, expiresIn } = response.data;
+      const expiresAt = new Date().getTime() + expiresIn * 1000;
+      const user = { access, refresh, expiresAt };
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
       console.error('Error signing up:', error);
       throw error;
@@ -67,14 +60,41 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     navigate('/login');
   };
 
+  const refreshToken = async () => {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/refresh/`, {
+        refresh: storedUser.refresh,
+      });
+      const { access, expiresIn } = response.data;
+      const expiresAt = new Date().getTime() + expiresIn * 1000;
+      const user = { ...storedUser, access, expiresAt };
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      logout();
+    }
+  };
+
+  const isAuthenticated = () => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    return storedUser && storedUser.expiresAt > new Date().getTime();
+  };
+
+  const getAccessToken = () => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    return storedUser ? storedUser.access : null;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, refreshToken, isAuthenticated, getAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

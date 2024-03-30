@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
+import api from '../api';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -91,8 +91,7 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
   const [eventCategory, setEventCategory] = useState(event.eventCategory);
   const [eventDetails, setEventDetails] = useState(event.details);
   const [duration, setDuration] = useState(event.duration);
-  const { user } = useAuth();
-  const token = user?.token;
+  const { isAuthenticated } = useAuth();
 
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
@@ -107,12 +106,12 @@ const EditEventModal = ({ event, onClose, onEventUpdate }) => {
     };
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${event.id}/`, updatedEvent, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      onEventUpdate(updatedEvent);
+      if (isAuthenticated()) {
+        await api.put(`/api/events/${event.id}/`, updatedEvent);
+        onEventUpdate(updatedEvent);
+      } else {
+        console.error('User is not authenticated');
+      }
     } catch (error) {
       console.error('Error updating event:', error);
     }
