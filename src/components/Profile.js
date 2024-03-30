@@ -90,7 +90,7 @@ const Profile = () => {
     setUpdateError(null);
 
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/api/profile/me/', { name, email }, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/profile/me/`, { name, email }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,7 +115,7 @@ const Profile = () => {
     }
 
     try {
-      await axios.put('https://eventtimerdb.herokuapp.com/api/profile/change_password/', { current_password: currentPassword, new_password: newPassword }, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/profile/change_password/`, { current_password: currentPassword, new_password: newPassword }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,7 +135,7 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete('https://eventtimerdb.herokuapp.com/api/profile/delete_profile/', {
+        await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/profile/delete_profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

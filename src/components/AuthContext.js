@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const response = await axios.get('https://eventtimerdb.herokuapp.com/api/profile/me/');
+          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/profile/me/`);
           setUser({ token, ...response.data });
         }
       } catch (error) {
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/auth/login/', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login/`, {
         email,
         password,
       });
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (email, password, name) => {
     try {
-      const response = await axios.post('https://eventtimerdb.herokuapp.com/api/register/', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register/`, {
         email,
         password,
         name,
