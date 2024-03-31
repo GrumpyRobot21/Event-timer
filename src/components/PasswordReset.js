@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import Loading from './Loading';
 import Error from './Error';
+import api from './api';
 
 const StyledPasswordReset = styled.div`
   margin: 20px;

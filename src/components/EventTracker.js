@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
-import api from '../api';
+import api from './api';
 
 
 const PageContainer = styled.div`

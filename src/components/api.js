@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useAuth } from './components/AuthContext';
+import { useAuth } from './AuthContext';
 
 
 const api = axios.create({

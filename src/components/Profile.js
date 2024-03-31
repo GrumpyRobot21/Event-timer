@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Loading from './Loading';
 import Error from './Error';
 import { useAuth } from './AuthContext';
-import api from '../api';
+import api from './api';
 
 
 const PageContainer = styled.div`

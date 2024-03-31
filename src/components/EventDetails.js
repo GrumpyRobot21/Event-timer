@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Loading from './Loading';
 import Error from './Error';
 import { useAuth } from './AuthContext';
-import api from '../api';
+import api from './api';
 
 const StyledEventDetails = styled.div`
   margin: 20px;

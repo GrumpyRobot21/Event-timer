@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
-import api from '../api';
+import api from './api';
 import Loading from './Loading';
 import Error from './Error';
 import EditEventModal from './EditEventModal';
