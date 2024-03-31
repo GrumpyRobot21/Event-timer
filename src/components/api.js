@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useAuth } from './components/AuthContext';
 
+
 const api = axios.create({
-  baseURL: 'https://eventtimerdb.herokuapp.com',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 api.interceptors.request.use(

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
+import api from '../api';
 
 
 const PageContainer = styled.div`
@@ -96,21 +96,17 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get('/api/events/');
         setEvents(response.data);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
 
-    if (token) {
+    if (user && user.token) {
       fetchEvents();
     }
-  }, [token]);
+  }, [user]);
 
   const handleStartStop = () => {
     setIsRunning(!isRunning);
@@ -132,11 +128,7 @@ const EventTracker = () => {
     };
 
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/events/`, eventData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.post('/api/events/', eventData);
       setEvents([...events, eventData]);
       setTime(0);
       setEventCategory('');
@@ -145,6 +137,7 @@ const EventTracker = () => {
       console.error('Error saving event:', error);
     }
   };
+
 
   const formatTime = (time) => {
     const hours = Math.floor(time / 3600);

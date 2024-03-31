@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
+import { useAuth } from './AuthContext';
+import api from '../api';
 import Loading from './Loading';
 import Error from './Error';
 import EditEventModal from './EditEventModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { format } from 'date-fns';
-import { useAuth } from './AuthContext';
+
 
 const PageContainer = styled.div`
   display: flex;
@@ -90,11 +91,8 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/`, {
+        const response = await api.get('/api/events/', {
           params: { search: searchTerm },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         });
         setEvents((prevEvents) => [...prevEvents, ...response.data]);
         setLoading(false);
@@ -104,8 +102,10 @@ const EventList = () => {
       }
     };
 
-    fetchEvents();
-  }, [token, searchTerm]);
+    if (user && user.token) {
+      fetchEvents();
+    }
+  }, [user, searchTerm]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -149,11 +149,7 @@ const EventList = () => {
 
   const handleEventUpdate = async (updatedEvent) => {
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${updatedEvent.id}/`, updatedEvent, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.put(`/api/events/${updatedEvent.id}/`, updatedEvent);
       setEvents((prevEvents) =>
         prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
       );
@@ -165,11 +161,7 @@ const EventList = () => {
 
   const handleEventDelete = async () => {
     try {
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/events/${selectedEvent.id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.delete(`/api/events/${selectedEvent.id}/`);
       setEvents((prevEvents) => prevEvents.filter((event) => event.id !== selectedEvent.id));
       closeDeleteModal();
     } catch (error) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
-import api from '../api';
+import api from './api';
 
 const ModalOverlay = styled.div`
   position: fixed;
