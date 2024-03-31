@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Loading from './Loading';
 import Error from './Error';
 import { useAuth } from './AuthContext';
+import api from '../api';
+
 
 const PageContainer = styled.div`
   display: flex;
@@ -75,9 +76,8 @@ const Profile = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
   const { user, logout } = useAuth();
-  const token = user?.token;
 
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
@@ -90,11 +90,7 @@ const Profile = () => {
     setUpdateError(null);
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/profile/me/`, { name, email }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.put('/api/profile/me/', { name, email });
       // Update the user context or refetch user data
       setUpdateLoading(false);
     } catch (error) {
@@ -115,11 +111,7 @@ const Profile = () => {
     }
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/profile/change_password/`, { current_password: currentPassword, new_password: newPassword }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.put('/api/profile/change_password/', { current_password: currentPassword, new_password: newPassword });
       setUpdateLoading(false);
       // Clear form fields and display a success message
       setCurrentPassword('');
@@ -135,11 +127,7 @@ const Profile = () => {
   const handleDeleteProfile = async () => {
     if (window.confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
       try {
-        await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/profile/delete_profile/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await api.delete('/api/profile/delete_profile/');
         logout();
         // Redirect to the home page or display a success message
       } catch (error) {
