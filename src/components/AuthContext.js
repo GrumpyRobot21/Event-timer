@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import api from './api';
+import createApi from './api';
 
 export const AuthContext = createContext();
 
@@ -94,8 +94,10 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? storedUser.access : null;
   };
 
+  const api = createApi(isAuthenticated, getAccessToken, refreshToken);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, refreshToken, isAuthenticated, getAccessToken }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, refreshToken, isAuthenticated, getAccessToken, api }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
-import api from './api';
 import Loading from './Loading';
 import Error from './Error';
 import { format } from 'date-fns';
 import EditEventModal from './EditEventModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-
 
 const PageContainer = styled.div`
   display: flex;
@@ -85,7 +83,7 @@ const EventList = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { user } = useAuth();
+  const { api } = useAuth();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -101,10 +99,8 @@ const EventList = () => {
       }
     };
 
-    if (user && user.token) {
-      fetchEvents();
-    }
-  }, [user, searchTerm, page]);
+    fetchEvents();
+  }, [api, searchTerm, page]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);

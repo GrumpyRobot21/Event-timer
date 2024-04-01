@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
-import api from './api';
 import Loading from './Loading';
 import Error from './Error';
-
 
 const PageContainer = styled.div`
   display: flex;
@@ -84,7 +82,7 @@ const EventTracker = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const { user } = useAuth();
+  const { api } = useAuth();
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
   useEffect(() => {
@@ -96,6 +94,7 @@ const EventTracker = () => {
     }
     return () => clearInterval(interval);
   }, [isRunning]);
+
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -109,10 +108,8 @@ const EventTracker = () => {
       }
     };
 
-    if (user && user.token) {
-      fetchEvents();
-    }
-  }, [user, page]);
+    fetchEvents();
+  }, [api, page]);
 
   const handleStartStop = () => {
     setIsRunning(!isRunning);

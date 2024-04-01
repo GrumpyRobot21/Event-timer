@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Loading from './Loading';
 import Error from './Error';
 import { useAuth } from './AuthContext';
-import api from './api';
 
 const PageContainer = styled.div`
   display: flex;
@@ -80,7 +79,7 @@ const Profile = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, api } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -159,7 +158,6 @@ const Profile = () => {
   if (!user) {
     return <Loading />;
   }
-
 
   return (
     <PageContainer>
