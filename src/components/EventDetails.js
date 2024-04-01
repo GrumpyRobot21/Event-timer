@@ -15,26 +15,24 @@ const EventDetails = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        if (isAuthenticated()) {
-          const response = await api.get(`/api/events/${id}/`);
-          setEvent(response.data);
-          setLoading(false);
-        } else {
-          console.error('User is not authenticated');
-        }
+        const response = await api.get(`/api/events/${id}/`);
+        setEvent(response.data);
+        setLoading(false);
       } catch (error) {
         setError('Failed to fetch event details');
         setLoading(false);
       }
     };
 
-    fetchEvent();
-  }, [id, isAuthenticated]);
+    if (user && user.token) {
+      fetchEvent();
+    }
+  }, [id, user]);
 
   if (loading) {
     return <Loading />;

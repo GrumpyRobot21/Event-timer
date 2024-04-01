@@ -14,9 +14,9 @@ import PasswordReset from './components/PasswordReset';
 import EditEventModal from './components/EditEventModal';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 
-const ProtectedRoute = ({ element: Component, ...rest }) => {
+const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
-  return user ? <Component {...rest} /> : <Navigate to="/login" replace />;
+  return user ? children : <Navigate to="/login" replace />;
 };
 
 const App = () => {
@@ -26,17 +26,43 @@ const App = () => {
         <div>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupForm />} />
-            <Route path="/events/:id" element={<ProtectedRoute element={EventDetails} />} />
-            <Route path="/events" element={<ProtectedRoute element={EventList} />} />
-            <Route path="/events/:id/edit" element={<ProtectedRoute element={(props) => <EditEventModal {...props} />} />} />
-            <Route path="/events/:id/delete" element={<ProtectedRoute element={(props) => <DeleteConfirmationModal {...props} />} />} />
-            <Route path="/event-tracker" element={<ProtectedRoute element={EventTracker} />} />
-            <Route path="/profile" element={<ProtectedRoute element={Profile} />} />
-            <Route path="/password-reset" element={<PasswordReset />} />
-          </Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/login" element={<LoginPage />} />
+  <Route path="/signup" element={<SignupForm />} />
+  <Route
+    path="/events/:id"
+    element={
+      <PrivateRoute>
+        <EventDetails />
+      </PrivateRoute>
+    }
+  />
+  <Route
+    path="/events"
+    element={
+      <PrivateRoute>
+        <EventList />
+      </PrivateRoute>
+    }
+  />
+  <Route
+    path="/event-tracker"
+    element={
+      <PrivateRoute>
+        <EventTracker />
+      </PrivateRoute>
+    }
+  />
+  <Route
+    path="/profile"
+    element={
+      <PrivateRoute>
+        <Profile />
+      </PrivateRoute>
+    }
+  />
+  <Route path="/password-reset" element={<PasswordReset />} />
+</Routes>
           <Footer />
         </div>
       </AuthProvider>

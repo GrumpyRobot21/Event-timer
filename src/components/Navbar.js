@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { AuthContext } from './AuthContext';
 
@@ -46,6 +46,7 @@ const NavLink = styled(Link)`
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const location = useLocation();
 
   return (
     <NavbarWrapper>
@@ -53,17 +54,25 @@ const Navbar = () => {
       <NavLinks>
         {user ? (
           <>
-            <NavLink to="/events">Event List</NavLink>
-            <NavLink to="/event-tracker">Event Tracker</NavLink>
-            <NavLink to="/profile">Profile</NavLink>
-            <NavLink to="/" onClick={logout}>
-              Sign Out
+            <NavLink to="/events" active={location.pathname === '/events'}>
+              Event List
             </NavLink>
+            <NavLink to="/event-tracker" active={location.pathname === '/event-tracker'}>
+              Event Tracker
+            </NavLink>
+            <NavLink to="/profile" active={location.pathname === '/profile'}>
+              Profile
+            </NavLink>
+            <NavLink onClick={logout}>Sign Out</NavLink>
           </>
         ) : (
           <>
-            <NavLink to="/login">Sign In</NavLink>
-            <NavLink to="/signup">Sign Up</NavLink>
+            <NavLink to="/login" active={location.pathname === '/login'}>
+              Sign In
+            </NavLink>
+            <NavLink to="/signup" active={location.pathname === '/signup'}>
+              Sign Up
+            </NavLink>
           </>
         )}
       </NavLinks>

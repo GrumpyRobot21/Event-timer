@@ -5,7 +5,6 @@ import Error from './Error';
 import { useAuth } from './AuthContext';
 import api from './api';
 
-
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,6 +74,7 @@ const Profile = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -88,10 +88,17 @@ const Profile = () => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
+    setUpdateSuccess(false);
+
+    if (!name || !email) {
+      setUpdateError('Please enter name and email');
+      setUpdateLoading(false);
+      return;
+    }
 
     try {
       await api.put('/api/profile/me/', { name, email });
-      // Update the user context or refetch user data
+      setUpdateSuccess(true);
       setUpdateLoading(false);
     } catch (error) {
       setUpdateError('Failed to update profile');
@@ -103,6 +110,13 @@ const Profile = () => {
     e.preventDefault();
     setUpdateLoading(true);
     setUpdateError(null);
+    setUpdateSuccess(false);
+
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      setUpdateError('Please enter current and new passwords');
+      setUpdateLoading(false);
+      return;
+    }
 
     if (newPassword !== confirmNewPassword) {
       setUpdateError('New passwords do not match');
@@ -111,13 +125,15 @@ const Profile = () => {
     }
 
     try {
-      await api.put('/api/profile/change_password/', { current_password: currentPassword, new_password: newPassword });
-      setUpdateLoading(false);
-      // Clear form fields and display a success message
+      await api.put('/api/profile/change_password/', {
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
+      setUpdateSuccess(true);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');
-      alert('Password changed successfully');
+      setUpdateLoading(false);
     } catch (error) {
       setUpdateError('Failed to change password');
       setUpdateLoading(false);
@@ -129,7 +145,6 @@ const Profile = () => {
       try {
         await api.delete('/api/profile/delete_profile/');
         logout();
-        // Redirect to the home page or display a success message
       } catch (error) {
         setUpdateError('Failed to delete profile');
       }
@@ -140,11 +155,13 @@ const Profile = () => {
     return <Loading />;
   }
 
+
   return (
     <PageContainer>
       <ProfileContainer>
         <ProfileTitle>Profile</ProfileTitle>
         {updateError && <Error message={updateError} />}
+        {updateSuccess && <Success message="Profile updated successfully" />}
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <FormLabel>Name:</FormLabel>
@@ -168,7 +185,6 @@ const Profile = () => {
             {updateLoading ? 'Updating...' : 'Update Profile'}
           </Button>
         </form>
-
         <form onSubmit={handlePasswordChange}>
           <FormGroup>
             <FormLabel>Current Password:</FormLabel>
@@ -201,8 +217,9 @@ const Profile = () => {
             {updateLoading ? 'Changing Password...' : 'Change Password'}
           </Button>
         </form>
-
-        <Button onClick={handleDeleteProfile}>Delete Profile</Button>
+        <Button onClick={handleDeleteProfile} disabled={updateLoading}>
+          Delete Profile
+        </Button>
       </ProfileContainer>
     </PageContainer>
   );

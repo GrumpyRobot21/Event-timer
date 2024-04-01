@@ -4,9 +4,9 @@ import { useAuth } from './AuthContext';
 import api from './api';
 import Loading from './Loading';
 import Error from './Error';
+import { format } from 'date-fns';
 import EditEventModal from './EditEventModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { format } from 'date-fns';
 
 
 const PageContainer = styled.div`
@@ -86,13 +86,12 @@ const EventList = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { user } = useAuth();
-  const token = user?.token;
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await api.get('/api/events/', {
-          params: { search: searchTerm },
+          params: { search: searchTerm, page },
         });
         setEvents((prevEvents) => [...prevEvents, ...response.data]);
         setLoading(false);
@@ -105,7 +104,7 @@ const EventList = () => {
     if (user && user.token) {
       fetchEvents();
     }
-  }, [user, searchTerm]);
+  }, [user, searchTerm, page]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -196,7 +195,7 @@ const EventList = () => {
           <div>Event Notes</div>
           <div>Edit</div>
           <div>Delete</div>
-        </EventListHeader>
+          </EventListHeader>
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (

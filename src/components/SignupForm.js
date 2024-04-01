@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
 
@@ -67,14 +67,15 @@ const SignupForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    if (!name) {
-      setError('Please enter your name');
+    if (!name || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields');
       setLoading(false);
       return;
     }
@@ -87,6 +88,7 @@ const SignupForm = () => {
 
     try {
       await signup(email, password, name);
+      navigate('/login');
     } catch (error) {
       setError('Failed to create an account');
       console.error('Signup error:', error);

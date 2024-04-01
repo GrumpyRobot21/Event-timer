@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAuth } from './AuthContext';
 import api from './api';
+import Loading from './Loading';
+import Error from './Error';
 
 
 const PageContainer = styled.div`
@@ -79,8 +81,10 @@ const EventTracker = () => {
   const [eventCategory, setEventCategory] = useState('');
   const [eventDetails, setEventDetails] = useState('');
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
   const { user } = useAuth();
-  const token = user?.token;
   const eventCategories = ['Meeting', 'Phone Call', 'Video Call', 'Email', 'Administration'];
 
   useEffect(() => {
@@ -96,17 +100,19 @@ const EventTracker = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await api.get('/api/events/');
-        setEvents(response.data);
+        const response = await api.get('/api/events/', { params: { page } });
+        setEvents((prevEvents) => [...prevEvents, ...response.data]);
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        setError('Error fetching events');
+        setLoading(false);
       }
     };
 
     if (user && user.token) {
       fetchEvents();
     }
-  }, [user]);
+  }, [user, page]);
 
   const handleStartStop = () => {
     setIsRunning(!isRunning);
@@ -138,6 +144,19 @@ const EventTracker = () => {
     }
   };
 
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const formatTime = (time) => {
     const hours = Math.floor(time / 3600);
@@ -145,6 +164,14 @@ const EventTracker = () => {
     const seconds = time % 60;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error message={error} />;
+  }
 
   return (
     <PageContainer>
@@ -171,15 +198,14 @@ const EventTracker = () => {
           placeholder="Enter event details"
         />
         <StyledButton onClick={handleSaveEvent}>Save Event</StyledButton>
-      </TrackerContainer>
+        </TrackerContainer>
       <h3>Saved Events:</h3>
-      <ul>
-        {events.map((event, index) => (
-          <li key={index}>
-            {event.eventCategory} - {event.duration} seconds - {event.details}
-          </li>
-        ))}
-      </ul>
+      {events.map((event, index) => (
+        <li key={index}>
+          {event.eventCategory} - {event.duration} seconds - {event.details}
+        </li>
+      ))}
+      {loading && <Loading />}
     </PageContainer>
   );
 };
