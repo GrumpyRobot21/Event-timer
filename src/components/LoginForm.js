@@ -51,6 +51,14 @@ const ErrorMessage = styled.p`
   margin-top: 1rem;
 `;
 
+const PasswordVisibilityToggle = styled.span`
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+`;
+
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -104,18 +112,20 @@ const LoginForm = () => {
         </FormGroup>
         <FormGroup>
           <FormLabel htmlFor="password">Password:</FormLabel>
-          <FormInput
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-          />
-          <PasswordVisibilityToggle onClick={togglePasswordVisibility}>
-            {showPassword ? 'Hide' : 'Show'}
-          </PasswordVisibilityToggle>
+          <div style={{ position: 'relative' }}>
+            <FormInput
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+            <PasswordVisibilityToggle onClick={togglePasswordVisibility}>
+              {showPassword ? 'Hide' : 'Show'}
+            </PasswordVisibilityToggle>
+          </div>
         </FormGroup>
         <FormButton type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}

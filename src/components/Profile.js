@@ -66,6 +66,11 @@ const Button = styled.button`
   margin-top: 1rem;
 `;
 
+const SuccessMessage = styled.p`
+  color: green;
+  margin-bottom: 1rem;
+`;
+
 const Profile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -161,7 +166,7 @@ const Profile = () => {
       <ProfileContainer>
         <ProfileTitle>Profile</ProfileTitle>
         {updateError && <Error message={updateError} />}
-        {updateSuccess && <Success message="Profile updated successfully" />}
+        {updateSuccess && <SuccessMessage>Profile updated successfully</SuccessMessage>}
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <FormLabel>Name:</FormLabel>
