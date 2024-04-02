@@ -37,8 +37,10 @@ const NavLink = styled(Link)`
   color: #000;
   text-decoration: none;
   font-weight: bold;
-  ${(props) => props.isactive && `color: #007bff;`}
   &:hover {
+    color: #007bff;
+  }
+  &.active {
     color: #007bff;
   }
 `;
@@ -53,13 +55,13 @@ const Navbar = () => {
       <NavLinks>
         {user ? (
           <>
-            <NavLink to="/events" isactivective={location.pathname === '/events' || undefined}>
+            <NavLink to="/events" className={location.pathname === '/events' ? 'active' : ''}>
               Event List
             </NavLink>
-            <NavLink to="/event-tracker" isactive={location.pathname === '/event-tracker' || undefined}>
+            <NavLink to="/event-tracker" className={location.pathname === '/event-tracker' ? 'active' : ''}>
               Event Tracker
             </NavLink>
-            <NavLink to="/profile" isactive={location.pathname === '/profile' || undefined}>
+            <NavLink to="/profile" className={location.pathname === '/profile' ? 'active' : ''}>
               Profile
             </NavLink>
             <NavLink onClick={logout} to="/login">
@@ -68,10 +70,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <NavLink to="/login" isactive={location.pathname === '/login' || undefined}>
+            <NavLink to="/login" className={location.pathname === '/login' ? 'active' : ''}>
               Sign In
             </NavLink>
-            <NavLink to="/signup" isactive={location.pathname === '/signup' || undefined}>
+            <NavLink to="/signup" className={location.pathname === '/signup' ? 'active' : ''}>
               Sign Up
             </NavLink>
           </>
