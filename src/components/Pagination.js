@@ -11,8 +11,8 @@ const StyledPageLink = styled.button`
   padding: 5px 10px;
   margin: 0 5px;
   border: none;
-  background-color: ${(props) => (props.active ? '#007bff' : 'transparent')};
-  color: ${(props) => (props.active ? '#fff' : '#007bff')};
+  background-color: ${(props) => (props.active === "true" ? '#007bff' : 'transparent')};
+  color: ${(props) => (props.active === "true" ? '#fff' : '#007bff')};
   cursor: pointer;
 `;
 
@@ -23,7 +23,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     pageLinks.push(
       <StyledPageLink
         key={i}
-        active={i === currentPage}
+        active={i === currentPage ? "true" : "false"} // Convert boolean to string
         onClick={() => onPageChange(i)}
       >
         {i}
