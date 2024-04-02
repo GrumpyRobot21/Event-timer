@@ -23,7 +23,7 @@ const App = () => {
   return (
     <Router>
       <AuthProvider>
-        <div>
+        <div>s
           <Navbar />
           <Routes>
   <Route path="/" element={<Home />} />
