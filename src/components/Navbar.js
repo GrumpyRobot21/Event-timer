@@ -38,7 +38,8 @@ const NavLink = styled(Link)`
   color: #000;
   text-decoration: none;
   font-weight: bold;
-  
+  ${(props) => props.active && `color: #007bff;`}
+
   &:hover {
     color: #007bff;
   }
@@ -63,7 +64,9 @@ const Navbar = () => {
             <NavLink to="/profile" active={location.pathname === '/profile'}>
               Profile
             </NavLink>
-            <NavLink onClick={logout}>Sign Out</NavLink>
+            <NavLink onClick={logout} to="/login">
+              Sign Out
+            </NavLink>
           </>
         ) : (
           <>
